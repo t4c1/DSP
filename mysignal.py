@@ -7,7 +7,13 @@ TIME = 3 #v s
 def play(tab,rate=SAMPLE_RATE):
     #PLAYER="c:\\dps\\scilab\\bin\\mplay32"
     TMP_FN = "tmp.wav"
-    scipy.io.wavfile.write(TMP_FN, rate, numpy.array(tab/numpy.max(numpy.abs(tab))*(2**30),dtype=numpy.int32))
+    if tab.dtype in (numpy.float32,numpy.float64):
+        m=numpy.max(numpy.abs(tab))
+        if m>1:#za 32b int source, ki je bil konvertiran v float - ne vemo absolutne glasnosti
+            tab/=m
+        scipy.io.wavfile.write(TMP_FN, rate, numpy.array(tab*(2**30),dtype=numpy.int32))
+    else:
+        scipy.io.wavfile.write(TMP_FN, rate, tab)
     #os.popen(PLAYER+" "+TMP_FN)
     os.popen(TMP_FN)
 
@@ -28,8 +34,8 @@ def iir2(s):
     a=[1,C]
     return scipy.signal.lfilter(b,a,s)
 
-def FM(freq,freqMod,amMod,recursion=1,sample_rate=SAMPLE_RATE,time=TIME,volume=0.7):
-    samples=numpy.arange(sample_rate * time)*2*numpy.pi/sample_rate
+def FM(freq,freqMod,amMod=0.0,recursion=0,sample_rate=SAMPLE_RATE,time=TIME,volume=0.7):
+    samples=numpy.arange(float(sample_rate * time))*2*numpy.pi/sample_rate
     res=numpy.sin(freqMod*samples)
     for i in range(recursion):
         res=numpy.sin(freqMod*samples + amMod*res)
@@ -74,13 +80,14 @@ if __name__=="__main__":
     plt.plot(s2[:PLOT_SAMPLES], color="b")
     plt.show()
     """
-    play(numpy.hstack([tone(FREQ, time=2),
-                       FM(FREQ, 2*FREQ, 0.5, 0),
-                       FM(FREQ, 2*FREQ, 0.5, 1),
-                       FM(FREQ, 2*FREQ, 0.5, 2),
-                       FM(FREQ, 2*FREQ, 0.5, 4),
-                       FM(FREQ, 2*FREQ, 0.5, 800)]))
+    # play(numpy.hstack([tone(FREQ, time=2),
+    #                    FM(FREQ, 2*FREQ, 0.5, 0),
+    #                    FM(FREQ, 2*FREQ, 0.5, 1),
+    #                    FM(FREQ, 2*FREQ, 0.5, 2),
+    #                    FM(FREQ, 2*FREQ, 0.5, 4),
+    #                    FM(FREQ, 2*FREQ, 0.5, 100)]))
 
+    play(numpy.hstack([tone(FREQ, time=2,volume=0.5),tone(FREQ, time=2,volume=0.5*1.22)]))
 
     """rate,data=scipy.io.wavfile.read("runaway_mono.wav")
     play(odmev(data),rate)"""
