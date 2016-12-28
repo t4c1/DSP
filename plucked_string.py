@@ -1,10 +1,19 @@
 import numpy, scipy.io
 from mysignal import play, tone
 
-def plucked_string(buf_len, iters, pre_iters=0, filter=lambda x: 0.995 * (x * 0.6 + numpy.roll(x, 1) * 0.4)):
-    #buffer=numpy.sin(numpy.arange(buf_len)*2 * numpy.pi)
-    buffer=numpy.random.random(buf_len)*2-1
-    print(buffer)
+def plucked_string(freq, time, pre_iters=0, filter=lambda x: 0.995 * (x * 0.6 + numpy.roll(x, 1) * 0.4),rate=44100, d=0.5):
+    buf_len=round(rate/freq-d)
+    iters=int(TIME * RATE / buf_len)
+
+    #buffer=numpy.random.random(buf_len)*2
+
+    #buffer=numpy.zeros(buf_len)
+    #buffer[0]=buf_len/2
+
+    #buffer=tone(freq*2**0.5,rate,buf_len/rate)
+    buffer=tone(freq*2.1,rate,buf_len/rate)
+
+    buffer-=numpy.mean(buffer)
     out=buffer[:]
     for i in range(pre_iters-1):
         buffer=filter(buffer)
@@ -13,14 +22,22 @@ def plucked_string(buf_len, iters, pre_iters=0, filter=lambda x: 0.995 * (x * 0.
         out=numpy.hstack((out,buffer))
     return out
 
-def load_filters():
-    a=scipy.io.loadmat("filtri.mat")
-    return a["h1"],a["h2"],a["h3"],a["h4"],a["h5"]
-
 if __name__=="__main__":
     RATE=44100
     FREQ=200
-    TIME=2 #s
+    TIME=5 #s
 
-    buf_len = RATE / FREQ
-    play(0.4 * plucked_string(buf_len, int(TIME * RATE / buf_len), 0), RATE)
+    play(0.4 * numpy.hstack((plucked_string(FREQ, TIME, 0, lambda x: 0.97 * (x * 0.5 + numpy.roll(x, 1) * 0.5)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.98 * (x * 0.5 + numpy.roll(x, 1) * 0.5)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.99 * (x * 0.5 + numpy.roll(x, 1) * 0.5)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.995 * (x * 0.5 + numpy.roll(x, 1) * 0.5)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.999 * (x * 0.5 + numpy.roll(x, 1) * 0.5)),
+
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.995 * (x * 0.6 + numpy.roll(x, 1) * 0.4)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.995 * (x * 0.7 + numpy.roll(x, 1) * 0.3)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.995 * (x * 0.8 + numpy.roll(x, 1) * 0.2)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.995 * (x * 0.9 + numpy.roll(x, 1) * 0.1)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.995 * (x * 0.95 + numpy.roll(x, 1) * 0.05)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 0.995 * (x * 0.98 + numpy.roll(x, 1) * 0.02)),
+                             plucked_string(FREQ, TIME, 0, lambda x: 1.0 * (x * 0.5 + numpy.roll(x, 1) * 0.5)),
+    )), RATE)
