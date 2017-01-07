@@ -7,11 +7,12 @@ def mag2dB(x):
 def plotfft(x, sampling_rate=1,logscale=False):
     f=numpy.fft.rfft(x)
     mag=numpy.abs(f)
+    #mag[mag<0.1]=0
 
     fig1 = plt.figure()
     if logscale:
         mag=mag2dB(mag)
-    plt.plot(numpy.arange(mag.size)/mag.size*sampling_rate/2, mag, color="g")
+    plt.plot(numpy.arange(mag.size,dtype=numpy.float32)/mag.size*sampling_rate/2, mag, color="g")
     #deltafreq=rate/mag.size
     plt.show()
 

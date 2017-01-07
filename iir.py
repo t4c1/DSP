@@ -27,6 +27,6 @@ def plot_filter_response(filter, sampling_frequency, resolution, logscale=True):
 
 if __name__=="__main__":
     fs = 500
-    iir=make_filter([-1,1],[0.937j,-0.937j])
-    #iir=make_peak(50, fs)
+    #iir=make_filter([-1,1],[0.937j,-0.937j])
+    iir=make_peak(50, fs)
     plot_filter_response(iir, fs, 1024,False)

@@ -25,6 +25,6 @@ def low_pass_remez(freq, sampling_freq=1.0, length=129, pbw=0.05):
 
 if __name__=="__main__":
     length=129
-    lp=make_low_pass(0.2,length=length, window=scipy.signal.chebwin(length,100))#numpy.kaiser(length,5.44)
-    #lp=low_pass_remez(0.2,length=length)
+    #lp=make_low_pass(0.2,length=length, window=scipy.signal.chebwin(length,100))#numpy.kaiser(length,5.44)
+    lp=low_pass_remez(0.2,length=length)
     plot_filter_response(lp,1,1024)
