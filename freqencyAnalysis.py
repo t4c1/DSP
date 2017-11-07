@@ -4,8 +4,8 @@ from mysignal import play, tone
 def mag2dB(x):
     return 20 * numpy.log10(x / max(x))
 
-def plotfft(x, sampling_rate=1,logscale=False):
-    f=numpy.fft.rfft(x)
+def plotfft(x, sampling_rate=1,logscale=False, n=None):
+    f=numpy.fft.rfft(x,n)
     mag=numpy.abs(f)
     #mag[mag<0.1]=0
 
@@ -16,8 +16,8 @@ def plotfft(x, sampling_rate=1,logscale=False):
     #deltafreq=rate/mag.size
     plt.show()
 
-def find_tones(x, sampling_rate=1, tresh=0.8, logscale=False):
-    f=numpy.fft.rfft(x)
+def find_tones(x, sampling_rate=1, tresh=0.8, logscale=False, n=None):
+    f=numpy.fft.rfft(x,n)
     #f=f[:f.size/2]
     mag=numpy.abs(f)
     if logscale:
