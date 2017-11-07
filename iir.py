@@ -12,13 +12,13 @@ def make_filter(zeros, poles):
     else:
         return lambda x: numpy.convolve(x,a)
 
-def make_notch(freq, sampling_freq):
+def make_notch(freq, sampling_freq, param=0.937):
     direction=numpy.e**(1j*numpy.pi*freq/sampling_freq*2)
-    return make_filter([direction, numpy.conj(direction)],[0.937*direction, 0.937*numpy.conj(direction)])
+    return make_filter([direction, numpy.conj(direction)], [param * direction, param * numpy.conj(direction)])
 
-def make_peak(freq, sampling_freq):
+def make_peak(freq, sampling_freq, param=0.937):
     direction=numpy.e**(1j*numpy.pi*freq/sampling_freq*2)
-    return make_filter([],[0.937*direction, 0.937*numpy.conj(direction)])
+    return make_filter([], [param * direction, param * numpy.conj(direction)])
 
 def plot_filter_response(filter, sampling_frequency, resolution, logscale=True):
     impulse_response=filter([1]+[0]*(resolution-1))
